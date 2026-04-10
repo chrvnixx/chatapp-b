@@ -1,4 +1,5 @@
 import React from "react";
+import {Search} from "lucide-react"
 
 export default function SearchInput() {
   return (
@@ -9,7 +10,7 @@ export default function SearchInput() {
         className="input input-bordered rounded-full"
       />
       <button type="submit" className="btn btn-circle bg-sky-500 text-white">
-        Icon
+        <Search/>
       </button>
     </form>
   );
