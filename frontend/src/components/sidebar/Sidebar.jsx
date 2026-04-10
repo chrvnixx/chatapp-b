@@ -5,7 +5,7 @@ import LogoutButton from "./LogoutButton";
 
 export default function sideBar() {
   return (
-    <div>
+    <div className=" px-4">
       
       <SearchInput />
       <div className="divider px-3">
