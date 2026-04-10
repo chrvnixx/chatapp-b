@@ -5,14 +5,21 @@ import LogoutButton from "./LogoutButton";
 
 export default function sideBar() {
   return (
-    <div className=" px-4">
+    <div className=" relative px-4 border-r w-70 border-white overflow-auto ">
       
-      <SearchInput />
+      <div className="fixed top-4 ">
+        <SearchInput />
+      </div>
       <div className="divider px-3">
       </div>
-      <Conversations/>
 
-      <LogoutButton/>
+     <div className=" mt-16">
+       <Conversations/>
+     </div>
+
+     <div className="fixed bottom-0 p-4">
+       <LogoutButton/>
+     </div>
     </div>
   );
 }
