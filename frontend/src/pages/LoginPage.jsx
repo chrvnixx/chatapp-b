@@ -31,14 +31,15 @@ export default function LoginPage() {
               className="w-full input input-bordered h-10"
             />
           </div>
-          <Link to={"/signup"}
+          <Link
+            to={"/signup"}
             className="text-sm hover:underline hover:text-blue-600 mt-2 inline-block"
           >
             {"Don't"} have an account?
           </Link>
 
           <div className="flex justify-center">
-            <button class="btn btn-block btn-sm mt-4">Signin</button>
+            <button className="btn btn-block btn-sm mt-4">Signin</button>
           </div>
         </form>
       </div>

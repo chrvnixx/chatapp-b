@@ -80,3 +80,19 @@ export async function login(req, res) {
     console.log("Error in signup controller", error);
   }
 }
+
+export async function checkAuth(req, res) {
+  const id = req.userId;
+  try {
+    const user = User.findById(id);
+    if (!user) {
+      return res.status(404).json({ message: "Unauthorised user not found" });
+    }
+    res.status(200).json({ message: "User is authentic" });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Internal server error", error: error.message });
+    console.log("Error in signup controller", error);
+  }
+}
