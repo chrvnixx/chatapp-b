@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import GenderCheckbox from "./GenderCheckbox";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
+import { useAuthStore } from "../../store/authStore";
+import { BarLoader } from "react-spinners";
 
 export default function SignupPage() {
   const [inputs, setInputs] = useState({
@@ -10,13 +12,29 @@ export default function SignupPage() {
     confirmPassword: "",
     gender: "",
   });
+  const [passMatch, setPassMatch] = useState(false);
 
-  function handleCheckboxChange(gender){
-    setInputs({...inputs, gender})
+  const { isLoading, error, signup } = useAuthStore();
+
+  const navigate = useNavigate();
+
+  function handleCheckboxChange(gender) {
+    setInputs({ ...inputs, gender });
   }
-  
-  function handleSubmit(e){
-    e.preventDefault()
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+
+    try {
+      const { fullName, username, password, gender, confirmPassword } = inputs;
+      if (confirmPassword !== password) {
+        return setPassMatch(true);
+      }
+      await signup(fullName, username, password, gender);
+      navigate("/login");
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   return (
@@ -27,7 +45,7 @@ export default function SignupPage() {
           <span className="text-blue-500">ChatApp</span>
         </h1>
 
-        <form onSubmit={(e)=>handleSubmit(e)}>
+        <form onSubmit={(e) => handleSubmit(e)}>
           <div>
             <label className="label p-2">
               <span className="text-base label-text">Full Name</span>
@@ -70,6 +88,11 @@ export default function SignupPage() {
               }
             />
           </div>
+
+          <div className="text-error font-bold">
+            {passMatch ? "passwords do not match" : ""}
+          </div>
+
           <div>
             <label className="label p-2">
               <span className="text-base label-text">Confirm Password</span>
@@ -85,7 +108,10 @@ export default function SignupPage() {
             />
           </div>
 
-          <GenderCheckbox onCheckboxChange={handleCheckboxChange} selectedGender={inputs.gender}   />
+          <GenderCheckbox
+            onCheckboxChange={handleCheckboxChange}
+            selectedGender={inputs.gender}
+          />
 
           <Link
             to={"/login"}
@@ -94,8 +120,14 @@ export default function SignupPage() {
             Already have an account?
           </Link>
 
+          <div className="flex justify-center text-error font-bold">
+            {error}
+          </div>
+
           <div className="flex justify-center">
-            <button class="btn btn-block btn-sm mt-4">Sign up</button>
+            <button type="submit" className="btn btn-block btn-sm mt-4">
+              {isLoading ? <BarLoader color="white" /> : "Sign up"}
+            </button>
           </div>
         </form>
       </div>

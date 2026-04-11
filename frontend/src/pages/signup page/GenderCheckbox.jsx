@@ -10,7 +10,8 @@ export default function GenderCheckbox({ onCheckboxChange, selectedGender }) {
             type="checkbox"
             className="checkbox border-slate-900"
             checked={selectedGender === "male"}
-            onChange={() => onCheckboxChange("male")}
+            onChange={()=>onCheckboxChange("male")}
+            
           />
         </label>
       </div>
@@ -21,8 +22,8 @@ export default function GenderCheckbox({ onCheckboxChange, selectedGender }) {
           <input
             type="checkbox"
             className="checkbox border-slate-900"
-            checked={selectedGender === "female"}
-            onChange={() => onCheckboxChange("female")}
+           checked={selectedGender === "female"}
+            onChange={()=>onCheckboxChange("female")}
           />
         </label>
       </div>
