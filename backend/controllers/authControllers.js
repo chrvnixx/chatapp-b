@@ -84,11 +84,14 @@ export async function login(req, res) {
 export async function checkAuth(req, res) {
   const id = req.userId;
   try {
-    const user = User.findById(id);
+    const user = await User.findById(id);
     if (!user) {
       return res.status(404).json({ message: "Unauthorised user not found" });
     }
-    res.status(200).json({ message: "User is authentic" });
+    res.status(200).json({
+      message: "User is authentic",
+      user:{...user._doc}
+    });
   } catch (error) {
     res
       .status(500)
