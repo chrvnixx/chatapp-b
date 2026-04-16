@@ -1,45 +1,20 @@
-import { Routes, Route, Navigate } from "react-router";
+import { Route, Routes } from "react-router";
+import "./App.css";
+import Signup from "./pages/Signup";
+import Login from "./pages/Login";
 import HomePage from "./pages/HomePage";
 
-import LoginPage from "./pages/LoginPage";
-import SignupPage from "./pages/signup page/SignupPage";
-import { useAuthStore } from "./store/authStore";
-import { useEffect } from "react";
-import { BarLoader } from "react-spinners";
-
-const App =  () => {
-  const { isAuthenticated, isCheckingAuth, checkAuth, user } = useAuthStore();
-
-  useEffect(() => {
-     checkAuth();
-  }, [checkAuth]);
-
-  if (isCheckingAuth) {
-    return (
-      <div className="h-screen flex justify-center items-center">
-        <BarLoader />
-      </div>
-    );
-  }
-
+function App() {
   return (
-    <div className="p-4 h-screen flex items-center justify-center ">
+    <div className="bg-gray-600">
+      
       <Routes>
-        <Route
-          path="/"
-          element={!isAuthenticated ? <Navigate to="/login" /> : <HomePage />}
-        />
-        <Route
-          path="/login"
-          element={isAuthenticated ? <Navigate to="/" /> : <LoginPage />}
-        />
-        <Route
-          path="/signup"
-          element={isAuthenticated ? <Navigate to="/" /> : <SignupPage />}
-        />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/" element={<HomePage />} />
       </Routes>
     </div>
   );
-};
+}
 
 export default App;

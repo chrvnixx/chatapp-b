@@ -20,7 +20,7 @@ export async function signup(req, res) {
 
     //https://avatar-placeholder.iran.liara.run/avatar/200/200/any
 
-    const randomProfilePic = ` https://api.dicebear.com/9.x/micah/svg?seed=${username}`;
+    const randomProfilePic = `https://api.dicebear.com/9.x/micah/svg?seed=${username}`;
 
     const user = new User({
       fullName,
@@ -56,6 +56,9 @@ export async function logout(req, res) {
 export async function login(req, res) {
   const { username, password } = req.body;
   try {
+    if (!username || !password) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
     const user = await User.findOne({ username });
     const verifyPassword = await user.comparePassword(password);
 
@@ -90,7 +93,7 @@ export async function checkAuth(req, res) {
     }
     res.status(200).json({
       message: "User is authentic",
-      user:{...user._doc}
+      user: { ...user._doc },
     });
   } catch (error) {
     res

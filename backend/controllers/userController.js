@@ -8,7 +8,9 @@ export async function getUsersForSidebar(req, res) {
       "-password",
     );
 
-    res.status(200).json(filteredUsers);
+    const users = filteredUsers;
+
+    res.status(200).json(users);
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
     console.log("Error in sendMessage Controller", error);
