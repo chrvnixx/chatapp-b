@@ -63,7 +63,11 @@ export const useAuthStore = create((set) => ({
 
     try {
       const response = await axios.get(`${api_url}/users`);
-      set({ user: response.data.users, isLoading: true, isAuthenticated: true });
+      set({
+        user: response.data,
+        isLoading: true,
+        isAuthenticated: true,
+      });
     } catch (error) {
       set({
         error: error.response.data.message,

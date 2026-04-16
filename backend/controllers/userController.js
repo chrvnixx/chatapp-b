@@ -10,7 +10,7 @@ export async function getUsersForSidebar(req, res) {
 
     const users = filteredUsers;
 
-    res.status(200).json({users:users});
+    res.status(200).json(users);
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
     console.log("Error in sendMessage Controller", error);

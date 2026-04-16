@@ -1,12 +1,15 @@
 import React, { useState } from "react";
 import { useAuthStore } from "../store/authStore";
 import { BarLoader } from "react-spinners";
+import { useNavigate } from "react-router";
 
 export default function Login() {
   const [inputs, setInputs] = useState({
     username: "",
     password: "",
   });
+
+  const navigate = useNavigate();
 
   const { login, isLoading, error } = useAuthStore();
 
@@ -16,6 +19,7 @@ export default function Login() {
 
     try {
       await login(username, password);
+      navigate("/");
     } catch (error) {
       console.log(error);
     }

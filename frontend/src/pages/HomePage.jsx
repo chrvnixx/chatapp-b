@@ -6,6 +6,7 @@ import { TbLogout2 } from "react-icons/tb";
 import MessageContainer from "../components/message/MessageContainer";
 
 export default function HomePage() {
+ 
   const { conversations, user, isLoading, error } = useAuthStore();
 
   useEffect(() => {
@@ -13,27 +14,27 @@ export default function HomePage() {
   }, []);
   return (
     <div className="flex justify-center items-center h-screen my-auto">
-      <div className="card  bg-gray-400 flex  p-2 ">
+      <div className="card  bg-gray-400 flex flex-row gap-2 p-2 ">
         <div className="w-80">
-        <div>
-          <form className="flex justify-center">
-            <input type="text" className="input" />
-            <button className="btn btn-secondary rounded-full">
-              <CiSearch size={30} />
-            </button>
-          </form>
-          <div className="mt-10 h-120 overflow-auto">
-            {user?.map((item) => (
-              <Conversations key={item._id} item />
-            ))}
+          <div>
+            <form className="flex justify-center">
+              <input type="text" className="input" placeholder="search" />
+              <button className="btn btn-secondary rounded-full">
+                <CiSearch size={30} />
+              </button>
+            </form>
+            <div className="mt-10 h-120 overflow-auto">
+              {user?.map((item) => (
+                <Conversations key={item._id} item={item} />
+              ))}
+            </div>
+          </div>
+
+          <div className="mt-4">
+            <TbLogout2 size={30} />
           </div>
         </div>
-
-        <div className="mt-4">
-          <TbLogout2 size={30} />
-        </div>
-      </div >
-      <MessageContainer/>
+        <MessageContainer user={user} />
       </div>
     </div>
   );
