@@ -8,6 +8,7 @@ const api_url = "http://localhost:4000/api";
 export const useAuthStore = create((set) => ({
   user: null,
   loggedInUser: null,
+  conversations: [],
   error: null,
   isLoading: false,
   isAuthenticated: false,
@@ -70,14 +71,14 @@ export const useAuthStore = create((set) => ({
     }
   },
 
-  conversations: async () => {
+  getConversations: async () => {
     set({ isLoading: true, error: null });
 
     try {
       const response = await axios.get(`${api_url}/users`);
       set({
-        user: response.data,
-        isLoading: true,
+        conversations: response.data,
+        isLoading: false,
         isAuthenticated: true,
       });
     } catch (error) {
@@ -109,4 +110,6 @@ export const useAuthStore = create((set) => ({
       });
     }
   },
+
+
 }));

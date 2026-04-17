@@ -12,7 +12,7 @@ export default function Login() {
 
   const navigate = useNavigate();
 
-  const { conversations, login, isLoading, error } = useAuthStore();
+  const { login, isLoading, error } = useAuthStore();
   const { setSelectedConvo } = useConversation();
 
   async function handleLogin(e) {
@@ -21,13 +21,12 @@ export default function Login() {
 
     try {
       await login(username, password);
-      await conversations();
       setSelectedConvo();
       navigate("/");
     } catch (error) {
       console.log(error);
     }
-  }
+  } 
 
   return (
     <div className="flex justify-center items-center h-screen my-auto">
@@ -65,7 +64,7 @@ export default function Login() {
           </div>
           <div className="flex justify-center m-4">
             <button type="submit" className="btn btn-accent">
-              {isLoading ? <BarLoader /> : "Sign up"}
+              {isLoading ? <BarLoader /> : "Login"}
             </button>
           </div>
         </form>

@@ -8,7 +8,8 @@ import { useEffect } from "react";
 import { BarLoader } from "react-spinners";
 
 function App() {
-  const { isAuthenticated, login, isCheckingAuth, checkAuth } = useAuthStore();
+  const { isAuthenticated, isCheckingAuth, checkAuth } =
+    useAuthStore();
 
   useEffect(() => {
     checkAuth();
@@ -25,8 +26,14 @@ function App() {
   return (
     <div className="bg-gray-600">
       <Routes>
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/login" element={<Login />} />
+        <Route
+          path="/signup"
+          element={isAuthenticated ? <Navigate to="/" /> : <Signup />}
+        />
+        <Route
+          path="/login"
+          element={isAuthenticated ? <Navigate to="/" /> : <Login />}
+        />
         <Route
           path="/"
           element={!isAuthenticated ? <Navigate to="/login" /> : <HomePage />}

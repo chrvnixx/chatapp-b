@@ -6,7 +6,11 @@ import { TbLogout2 } from "react-icons/tb";
 import MessageContainer from "../components/message/MessageContainer";
 
 export default function HomePage() {
-  const { conversations, user, logout, isLoading, error } = useAuthStore();
+  const { conversations, getConversations, logout, isLoading, error } = useAuthStore();
+
+  useEffect(() => {
+    getConversations();
+  }, []);
 
   async function handleLogout() {
     try {
@@ -15,10 +19,8 @@ export default function HomePage() {
       console.log(error);
     }
   }
+  console.log();
 
-  useEffect(() => {
-    conversations();
-  }, []);
   return (
     <div className="flex justify-center items-center h-screen my-auto">
       <div className="card  bg-gray-400 flex flex-row gap-2 p-2 ">
@@ -31,7 +33,7 @@ export default function HomePage() {
               </button>
             </form>
             <div className="mt-10 h-120 overflow-auto">
-              {user?.map((item) => (
+              {conversations?.map((item) => (
                 <Conversations key={item._id} item={item} />
               ))}
             </div>
@@ -45,7 +47,7 @@ export default function HomePage() {
             />
           </div>
         </div>
-        <MessageContainer user={user} />
+        <MessageContainer  />
       </div>
     </div>
   );

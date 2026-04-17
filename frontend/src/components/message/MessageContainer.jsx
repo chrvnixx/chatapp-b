@@ -1,16 +1,30 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { LuSendHorizontal } from "react-icons/lu";
 import { useConversation } from "../../store/conversation";
 import { useAuthStore } from "../../store/authStore";
 import { IoIosChatbubbles } from "react-icons/io";
+import useMessageStore from "../../store/useMessageStore";
 
 export default function MessageContainer() {
-  const { selectedConvo, setSelectedConvo } = useConversation();
+  const { selectedConvo, messages } = useConversation();
   const { checkAuth, loggedInUser } = useAuthStore();
+  const [message, setMessage] = useState("");
+  const { sendMessage  } = useMessageStore();
 
   useEffect(() => {
     checkAuth();
   }, []);
+
+  async function handleMessage(e) {
+    e.preventDefault();
+
+    try {
+      await sendMessage(message);
+      setMessage("")
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   if (!selectedConvo) {
     return (
@@ -40,15 +54,23 @@ export default function MessageContainer() {
         </div>
       </div>
 
-      <form className="border rounded-full mt-2 flex justify-center items-center">
+      <form
+        onSubmit={handleMessage}
+        className="border rounded-full mt-2 flex justify-center items-center"
+      >
         <input
           type="text"
           className="h-12 w-full text-gray-700 ml-4 outline-none "
           placeholder="Type a new message"
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
         />
-        <div className="mr-1">
-          <LuSendHorizontal size={30} className="text-primary" />
-        </div>
+        <button type="submit" className="mr-1">
+          <LuSendHorizontal
+            size={30}
+            className="text-primary active:scale-90"
+          />
+        </button>
       </form>
     </div>
   );
