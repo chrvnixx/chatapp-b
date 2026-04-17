@@ -6,8 +6,15 @@ import { TbLogout2 } from "react-icons/tb";
 import MessageContainer from "../components/message/MessageContainer";
 
 export default function HomePage() {
- 
-  const { conversations, user, isLoading, error } = useAuthStore();
+  const { conversations, user, logout, isLoading, error } = useAuthStore();
+
+  async function handleLogout() {
+    try {
+      await logout();
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   useEffect(() => {
     conversations();
@@ -30,8 +37,12 @@ export default function HomePage() {
             </div>
           </div>
 
-          <div className="mt-4">
-            <TbLogout2 size={30} />
+          <div className="mt-4 ">
+            <TbLogout2
+              onClick={handleLogout}
+              size={30}
+              className="hover:scale-105 active:scale-100"
+            />
           </div>
         </div>
         <MessageContainer user={user} />

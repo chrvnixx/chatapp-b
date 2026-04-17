@@ -7,6 +7,7 @@ const api_url = "http://localhost:4000/api";
 
 export const useAuthStore = create((set) => ({
   user: null,
+  loggedInUser: null,
   error: null,
   isLoading: false,
   isAuthenticated: false,
@@ -58,6 +59,17 @@ export const useAuthStore = create((set) => ({
     }
   },
 
+  logout: async () => {
+    set({ isLoading: true, error: null });
+    try {
+      await axios.post(`${api_url}/auth/logout`);
+
+      set({ isLoading: false, isAuthenticated: false });
+    } catch (error) {
+      set({ isLoading: false, isAuthenticated: false });
+    }
+  },
+
   conversations: async () => {
     set({ isLoading: true, error: null });
 
@@ -75,6 +87,26 @@ export const useAuthStore = create((set) => ({
         isAuthenticated: false,
       });
       throw error;
+    }
+  },
+
+  checkAuth: async () => {
+    set({ isLoading: true, error: null });
+
+    try {
+      const res = await axios.get(`${api_url}/auth/check-auth`);
+      set({
+        loggedInUser: res.data.user,
+        isLoading: false,
+        isAuthenticated: true,
+        isCheckingAuth: false,
+      });
+    } catch (error) {
+      set({
+        error: error.response.data.message,
+        isLoading: false,
+        isAuthenticated: false,
+      });
     }
   },
 }));

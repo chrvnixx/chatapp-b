@@ -1,9 +1,26 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { LuSendHorizontal } from "react-icons/lu";
 import { useConversation } from "../../store/conversation";
+import { useAuthStore } from "../../store/authStore";
+import { IoIosChatbubbles } from "react-icons/io";
 
 export default function MessageContainer() {
   const { selectedConvo, setSelectedConvo } = useConversation();
+  const { checkAuth, loggedInUser } = useAuthStore();
+
+  useEffect(() => {
+    checkAuth();
+  }, []);
+
+  if (!selectedConvo) {
+    return (
+      <div className=" flex flex-col justify-center items-center bg-gray-200 text-2xl text-center w-150">
+        Welcome {loggedInUser.fullName} 🤲🏽, <br /> select a contact to start
+        chatting😈
+        <IoIosChatbubbles size={45} />
+      </div>
+    );
+  }
 
   return (
     <div className=" bg-gray-200 flex flex-col p-2 w-150">

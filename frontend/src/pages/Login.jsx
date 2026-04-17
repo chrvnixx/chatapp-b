@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useAuthStore } from "../store/authStore";
 import { BarLoader } from "react-spinners";
 import { useNavigate } from "react-router";
+import { useConversation } from "../store/conversation";
 
 export default function Login() {
   const [inputs, setInputs] = useState({
@@ -11,7 +12,8 @@ export default function Login() {
 
   const navigate = useNavigate();
 
-  const { login, isLoading, error } = useAuthStore();
+  const { conversations, login, isLoading, error } = useAuthStore();
+  const { setSelectedConvo } = useConversation();
 
   async function handleLogin(e) {
     e.preventDefault();
@@ -19,6 +21,8 @@ export default function Login() {
 
     try {
       await login(username, password);
+      await conversations();
+      setSelectedConvo();
       navigate("/");
     } catch (error) {
       console.log(error);
