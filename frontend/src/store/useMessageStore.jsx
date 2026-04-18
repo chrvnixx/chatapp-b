@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useConversation } from "./conversation";
 import axios from "axios";
 
@@ -23,15 +23,22 @@ export default function useMessageStore() {
     }
   }
 
-  async function getMessages() {
-    try {
-      setIsLoading(true);
-      const res = await axios.get(`${api_url}/${selectedConvo?._id}`);
+  useEffect(() => {
+    async function getMessages() {
+      try {
+        setIsLoading(true);
+        const res = await axios.get(`${api_url}/${selectedConvo?._id}`);
 
-      setMessages([res.data]);
-    } catch (error) {
-    } finally {
+        setMessages([res.data]);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setIsLoading(false);
+      }
     }
-  }
-  return { sendMessage, isLoading, getMessages,  };
+    if (selectedConvo?._id) {
+      getMessages();
+    }
+  }, [selectedConvo?._id, setMessages]);
+  return { sendMessage, isLoading, };
 }

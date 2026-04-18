@@ -9,18 +9,19 @@ export default function MessageContainer() {
   const { selectedConvo, messages } = useConversation();
   const { checkAuth, loggedInUser } = useAuthStore();
   const [message, setMessage] = useState("");
-  const { sendMessage  } = useMessageStore();
+  const { sendMessage } = useMessageStore();
 
-  useEffect(() => {
-    checkAuth();
-  }, []);
+  console.log(messages);
+
+  
 
   async function handleMessage(e) {
     e.preventDefault();
 
     try {
       await sendMessage(message);
-      setMessage("")
+
+      setMessage("");
     } catch (error) {
       console.log(error);
     }
@@ -50,7 +51,7 @@ export default function MessageContainer() {
           </div>
         </div>
         <div className="chat chat-end">
-          <div className="chat-bubble">You underestimate my power!</div>
+          <div className="chat-bubble">you underestimate my epon!!!</div>
         </div>
       </div>
 
