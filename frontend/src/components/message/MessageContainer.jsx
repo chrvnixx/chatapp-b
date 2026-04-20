@@ -5,13 +5,14 @@ import { useAuthStore } from "../../store/authStore";
 import { IoIosChatbubbles } from "react-icons/io";
 import useMessageStore from "../../store/useMessageStore";
 import Messages from "./Messages";
+import MessageSkeleton from "../MessageSkeleton";
 
 export default function MessageContainer() {
   const { selectedConvo, messages } = useConversation();
   const { checkAuth, user } = useAuthStore();
   const [message, setMessage] = useState("");
-  const { sendMessage } = useMessageStore();
-  const lastMessageRef = useRef()
+  const { sendMessage, isLoading } = useMessageStore();
+  const lastMessageRef = useRef();
 
   useEffect(() => {
     lastMessageRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -45,19 +46,23 @@ export default function MessageContainer() {
       </div>
 
       <div className="border h-120  overflow-y-auto px-2">
-        {messages.length === 0 ? (
-          <div className="flex justify-center text-gray-500">
-            Start a conversation with {selectedConvo?.fullName}
-          </div>
-        ) : (
-          <>
-            {messages?.map((item) => (
-              <div key={item._id} ref={lastMessageRef}>
-                <Messages item={item} />
+       
+          <div>
+            {messages.length === 0 ? (
+              <div className="flex justify-center text-gray-500">
+                Start a conversation with {selectedConvo?.fullName}
               </div>
-            ))}
-          </>
-        )}
+            ) : (
+              <>
+                {messages?.map((item) => (
+                  <div key={item._id} ref={lastMessageRef}>
+                    <Messages item={item} />
+                  </div>
+                ))}
+              </>
+            )}
+          </div>
+       
       </div>
 
       <form
