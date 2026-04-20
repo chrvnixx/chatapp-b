@@ -1,44 +1,90 @@
-import { useEffect, useState } from "react";
+import { useEffect, useEffectEvent, useState } from "react";
 import { useConversation } from "./conversation";
-import axios from "axios";
-
-axios.defaults.withCredentials = true;
+import { useSocket } from "../context/useSocket";
+import { api } from "../lib/api";
 
 export default function useMessageStore() {
+  const selectedConvo = useConversation((state) => state.selectedConvo);
+  const setMessages = useConversation((state) => state.setMessages);
+  const appendMessage = useConversation((state) => state.appendMessage);
   const [isLoading, setIsLoading] = useState(false);
-  const { selectedConvo, setMessages, messages } = useConversation();
-  const api_url = "http://localhost:4000/api/messages";
+  const [isSending, setIsSending] = useState(false);
+  const [error, setError] = useState(null);
+  const { socket } = useSocket();
 
   async function sendMessage(message) {
+    if (!selectedConvo?._id || !message.trim()) {
+      return null;
+    }
+
     try {
-      setIsLoading(true);
-      const res = await axios.post(`${api_url}/send/${selectedConvo?._id}`, {
+      setIsSending(true);
+      setError(null);
+
+      const res = await api.post(`/messages/send/${selectedConvo._id}`, {
         message,
       });
-      setMessages([...messages, res.data]);
+
+      appendMessage(res.data);
+      return res.data;
     } catch (error) {
-      console.log(error);
+      setError(error.response?.data?.message ?? "Couldn't send your message.");
+      throw error;
     } finally {
-      setIsLoading(false);
+      setIsSending(false);
     }
   }
+
+  const handleIncomingMessage = useEffectEvent((incomingMessage) => {
+    if (!selectedConvo?._id) {
+      return;
+    }
+
+    const belongsToActiveConversation =
+      incomingMessage.senderId === selectedConvo._id ||
+      incomingMessage.receiverId === selectedConvo._id;
+
+    if (belongsToActiveConversation) {
+      appendMessage(incomingMessage);
+    }
+  });
+
+  useEffect(() => {
+    if (!socket) {
+      return;
+    }
+
+    socket.on("newMessage", handleIncomingMessage);
+
+    return () => {
+      socket.off("newMessage", handleIncomingMessage);
+    };
+  }, [socket]);
 
   useEffect(() => {
     async function getMessages() {
       try {
         setIsLoading(true);
-        const res = await axios.get(`${api_url}/${selectedConvo?._id}`);
+        setError(null);
+
+        const res = await api.get(`/messages/${selectedConvo._id}`);
 
         setMessages(res.data);
       } catch (error) {
-        console.log(error);
+        setError(
+          error.response?.data?.message ?? "Couldn't load this conversation.",
+        );
       } finally {
         setIsLoading(false);
       }
     }
+
     if (selectedConvo?._id) {
       getMessages();
+    } else {
+      setMessages([]);
     }
   }, [selectedConvo?._id, setMessages]);
-  return { sendMessage, isLoading };
+
+  return { sendMessage, isLoading, isSending, error };
 }

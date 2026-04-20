@@ -5,7 +5,7 @@ export async function signup(req, res) {
   const { fullName, username, password, gender } = req.body;
   try {
     if (!fullName || !username || !password || !gender) {
-      res.status(400).json({ message: "All fields are required" });
+      return res.status(400).json({ message: "All fields are required" });
     }
 
     if (password.length < 6) {
@@ -59,12 +59,13 @@ export async function login(req, res) {
     if (!username || !password) {
       return res.status(400).json({ message: "All fields are required" });
     }
-    const user = await User.findOne({ username });
-    const verifyPassword = await user.comparePassword(password);
 
+    const user = await User.findOne({ username });
     if (!user) {
       return res.status(400).json({ message: "Invalid credentials" });
     }
+
+    const verifyPassword = await user.comparePassword(password);
 
     if (!verifyPassword) {
       return res.status(400).json({ message: "Invalid credentials" });
