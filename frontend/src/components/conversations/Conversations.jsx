@@ -8,6 +8,7 @@ export default function Conversations({ item }) {
 
   const isOnline = onlineUsers.includes(item._id);
   const isSelected = selectedConvo?._id === item._id;
+  const availabilityText = isOnline ? "Available to chat" : "Away right now";
 
   function handleClick() {
     setSelectedConvo(item);
@@ -17,15 +18,17 @@ export default function Conversations({ item }) {
     <button
       type="button"
       onClick={handleClick}
+      aria-pressed={isSelected}
+      aria-label={`Open conversation with ${item.fullName}`}
       className={`conversation-button ${isSelected ? "conversation-button--active" : ""}`}
     >
       <div className="flex items-center gap-4">
         <div className="relative">
-          <div className="h-14 w-14 overflow-hidden rounded-[20px] border border-[rgba(19,34,56,0.08)] bg-white/90 p-1">
+          <div className="conversation-button__avatar">
             <img
               src={item.profilePic}
               alt={`${item.fullName} avatar`}
-              className="h-full w-full rounded-[16px] object-cover"
+              className="h-full w-full rounded-[14px] object-cover"
             />
           </div>
           <span
@@ -33,18 +36,23 @@ export default function Conversations({ item }) {
           />
         </div>
 
-        <div className="min-w-0 flex-1 text-left">
-          <div className="flex items-center justify-between gap-3">
-            <p className="truncate font-semibold text-[var(--ink)]">
+        <div className="conversation-button__content text-left">
+          <div className="conversation-button__meta">
+            <p className="conversation-button__title truncate">
               {item.fullName}
             </p>
-            <span className="text-xs font-semibold text-[var(--muted)]">
-              {isOnline ? "Online" : "Offline"}
+            <span
+              className={`status-pill status-pill--tiny ${isOnline ? "status-pill--online" : ""}`}
+            >
+              {isOnline ? "Active now" : "Offline"}
             </span>
           </div>
-          <p className="mt-1 truncate text-sm text-[var(--muted)]">
-            @{item.username}
-          </p>
+          <div className="conversation-button__meta mt-1">
+            <p className="conversation-button__username truncate">
+              @{item.username}
+            </p>
+            <p className="conversation-button__presence">{availabilityText}</p>
+          </div>
         </div>
       </div>
     </button>

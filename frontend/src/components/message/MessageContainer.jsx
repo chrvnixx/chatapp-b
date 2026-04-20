@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState } from "react";
-import { FiArrowUpRight, FiSend, FiWifi } from "react-icons/fi";
+import { FiClock, FiMessageSquare, FiSend, FiWifi } from "react-icons/fi";
 import { HiOutlineSparkles } from "react-icons/hi2";
 import { useSocket } from "../../context/useSocket";
-import { useAuthStore } from "../../store/authStore";
 import { useConversation } from "../../store/conversation";
 import MessageSkeleton from "../MessageSkeleton";
 import useMessageStore from "../../store/useMessageStore";
@@ -11,7 +10,6 @@ import Messages from "./Messages";
 export default function MessageContainer() {
   const selectedConvo = useConversation((state) => state.selectedConvo);
   const messages = useConversation((state) => state.messages);
-  const user = useAuthStore((state) => state.user);
   const [draftMessages, setDraftMessages] = useState({});
   const { sendMessage, isLoading, isSending, error } = useMessageStore();
   const lastMessageRef = useRef();
@@ -36,7 +34,7 @@ export default function MessageContainer() {
     }));
 
     e.target.style.height = "0px";
-    e.target.style.height = `${Math.min(e.target.scrollHeight, 132)}px`;
+    e.target.style.height = `${Math.min(e.target.scrollHeight, 160)}px`;
   }
 
   function handleComposerKeyDown(e) {
@@ -62,7 +60,7 @@ export default function MessageContainer() {
       }));
 
       if (composerRef.current) {
-        composerRef.current.style.height = "52px";
+        composerRef.current.style.height = "56px";
       }
     } catch (sendError) {
       console.log(sendError);
@@ -71,56 +69,49 @@ export default function MessageContainer() {
 
   if (!selectedConvo) {
     return (
-      <section className="message-panel glass-card flex flex-col justify-between p-6 md:p-8">
-        <div>
-          <span className="section-chip">
-            <HiOutlineSparkles size={14} />
-            Ready when you are
-          </span>
+      <section className="message-panel glass-card empty-panel p-6 md:p-8">
+        <div className="max-w-xl text-center">
+          <div className="empty-panel__icon mx-auto">
+            <HiOutlineSparkles size={18} />
+          </div>
+          <div className="mt-6">
+            <span className="section-chip">
+              <HiOutlineSparkles size={14} />
+              Inbox ready
+            </span>
+          </div>
           <h2 className="panel-title mt-6 text-4xl">
-            Welcome back, {user?.fullName}
+            Choose a conversation to start messaging
           </h2>
-          <p className="panel-subtitle mt-4 max-w-xl text-base">
-            Pick a conversation from the sidebar to open the refreshed chat
-            canvas. You&apos;ll see presence, cleaner message bubbles, and a
-            smoother composer once a contact is selected.
+          <p className="panel-subtitle mt-4 text-base">
+            Pick a contact from the sidebar to review presence, open the thread,
+            and keep the conversation moving.
           </p>
-        </div>
-
-        <div className="grid gap-4 md:grid-cols-3">
-          <article className="feature-card">
-            <span className="section-chip">Live status</span>
-            <p className="panel-subtitle mt-3 text-sm">
-              Online contacts are marked instantly.
-            </p>
-          </article>
-          <article className="feature-card">
-            <span className="section-chip">Cleaner threads</span>
-            <p className="panel-subtitle mt-3 text-sm">
-              Messages now sit in a more polished reading layout.
-            </p>
-          </article>
-          <article className="feature-card">
-            <span className="section-chip">Focused writing</span>
-            <p className="panel-subtitle mt-3 text-sm">
-              Use the multiline composer for quick replies or longer notes.
-            </p>
-          </article>
+          <div className="mt-8 grid gap-3 text-left sm:grid-cols-2">
+            <article className="info-tile">
+              <h3>Presence-aware inbox</h3>
+              <p>See who is available before you open a thread.</p>
+            </article>
+            <article className="info-tile">
+              <h3>Fast composer</h3>
+              <p>Use Enter to send, or Shift + Enter when you need a new line.</p>
+            </article>
+          </div>
         </div>
       </section>
     );
   }
 
   return (
-    <section className="message-panel glass-card flex h-full min-h-[82vh] flex-col overflow-hidden">
-      <header className="flex flex-wrap items-center justify-between gap-4 border-b border-[rgba(19,34,56,0.08)] px-5 py-5 md:px-6">
+    <section className="message-panel glass-card flex h-full flex-col overflow-hidden">
+      <header className="flex flex-wrap items-center justify-between gap-4 px-5 py-5 md:px-6">
         <div className="flex items-center gap-4">
           <div className="relative">
-            <div className="h-16 w-16 overflow-hidden rounded-[24px] border border-[rgba(19,34,56,0.08)] bg-white/90 p-1 shadow-[0_14px_28px_rgba(19,34,56,0.08)]">
+            <div className="message-header-avatar">
               <img
                 src={selectedConvo.profilePic}
                 alt={`${selectedConvo.fullName} avatar`}
-                className="h-full w-full rounded-[20px] object-cover"
+                className="h-full w-full rounded-[16px] object-cover"
               />
             </div>
             <span
@@ -129,26 +120,35 @@ export default function MessageContainer() {
           </div>
 
           <div>
-            <span className="section-chip">Conversation</span>
+            <span className="section-chip">Active conversation</span>
             <h2 className="panel-title mt-3 text-2xl">
               {selectedConvo.fullName}
             </h2>
-            <p className="panel-subtitle">
-              {isSelectedUserOnline
-                ? "Active now and ready to reply."
-                : `Reach out to @${selectedConvo.username}.`}
-            </p>
+            <div className="mt-2 flex flex-wrap items-center gap-2 text-sm text-[var(--muted)]">
+              <span>@{selectedConvo.username}</span>
+              <span className="h-1 w-1 rounded-full bg-[var(--stroke-strong)]" />
+              <span>
+                {isSelectedUserOnline ? "Online now" : "Currently offline"}
+              </span>
+            </div>
           </div>
         </div>
 
-        <div className="flex items-center gap-2 rounded-full bg-[rgba(19,34,56,0.06)] px-4 py-2 text-sm font-semibold text-[var(--ink)]">
-          <FiWifi size={16} />
-          {isSelectedUserOnline ? "Live" : "Away"}
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="count-badge">
+            {messages.length} {messages.length === 1 ? "message" : "messages"}
+          </span>
+          <span
+            className={`status-pill ${isSelectedUserOnline ? "status-pill--online" : ""}`}
+          >
+            <FiWifi size={16} />
+            {isSelectedUserOnline ? "Online" : "Offline"}
+          </span>
         </div>
       </header>
 
       <div className="min-h-0 flex-1 p-4 md:p-6">
-        <div className="message-scroll h-full rounded-[30px] border border-[rgba(19,34,56,0.08)] bg-[rgba(255,255,255,0.62)] p-4 md:p-6">
+        <div className="message-scroll message-thread h-full">
           {isLoading ? (
             <div className="space-y-4">
               {Array.from({ length: 4 }).map((_, index) => (
@@ -159,19 +159,23 @@ export default function MessageContainer() {
 
           {!isLoading && messages.length === 0 ? (
             <div className="flex h-full min-h-[22rem] flex-col items-center justify-center text-center">
-              <span className="section-chip">First message</span>
+              <div className="empty-panel__icon">
+                <FiMessageSquare size={18} />
+              </div>
+              <span className="section-chip mt-6">No messages yet</span>
               <h3 className="mt-5 text-2xl font-semibold text-[var(--ink)]">
-                Start the conversation
+                Start the thread
               </h3>
               <p className="panel-subtitle mt-3 max-w-md text-sm">
-                Send a quick hello to {selectedConvo.fullName} and this thread
-                will come to life here.
+                Send a first message to {selectedConvo.fullName} and the full
+                conversation will appear here.
               </p>
             </div>
           ) : null}
 
           {!isLoading && messages.length > 0 ? (
-            <div className="space-y-4">
+            <div className="flex flex-col gap-4">
+              <span className="thread-day-label">Conversation synced</span>
               {messages.map((item) => (
                 <div key={item._id} ref={lastMessageRef}>
                   <Messages item={item} />
@@ -188,20 +192,33 @@ export default function MessageContainer() {
         ) : null}
 
         <form onSubmit={handleMessage} className="composer">
-          <textarea
-            key={selectedConvo._id}
-            ref={composerRef}
-            rows={1}
-            maxLength={250}
-            placeholder={`Write to ${selectedConvo.fullName}`}
-            value={message}
-            onChange={handleMessageChange}
-            onKeyDown={handleComposerKeyDown}
-          />
+          <div className="min-w-0 flex-1">
+            <textarea
+              key={selectedConvo._id}
+              ref={composerRef}
+              rows={1}
+              maxLength={250}
+              placeholder={`Message ${selectedConvo.fullName}`}
+              value={message}
+              onChange={handleMessageChange}
+              onKeyDown={handleComposerKeyDown}
+              aria-label={`Message ${selectedConvo.fullName}`}
+            />
+            <div className="mt-2 flex flex-wrap items-center justify-between gap-3 text-xs font-semibold text-[var(--muted)]">
+              <span className="inline-flex items-center gap-2">
+                <FiClock size={14} />
+                Press Enter to send. Use Shift + Enter for a new line.
+              </span>
+              <span>{message.trim().length}/250</span>
+            </div>
+          </div>
 
-          <div className="flex shrink-0 flex-col items-end gap-2">
-            <span className="text-xs font-semibold text-[var(--muted)]">
-              {message.trim().length}/250
+          <div className="composer__aside shrink-0">
+            <span
+              className={`status-pill ${isSelectedUserOnline ? "status-pill--online" : ""}`}
+            >
+              <FiWifi size={14} />
+              {isSelectedUserOnline ? "Live" : "Offline"}
             </span>
             <button
               type="submit"
@@ -219,14 +236,6 @@ export default function MessageContainer() {
             </button>
           </div>
         </form>
-
-        <div className="mt-3 flex items-center justify-between gap-3 text-xs text-[var(--muted)]">
-          <p>Press Enter to send. Use Shift + Enter for a new line.</p>
-          <span className="inline-flex items-center gap-1">
-            <FiArrowUpRight size={14} />
-            Polished for desktop and mobile
-          </span>
-        </div>
       </footer>
     </section>
   );

@@ -29,7 +29,7 @@ function App() {
             the chat view.
           </p>
           <div className="mt-6">
-            <BarLoader color="#ff7a59" width={180} />
+            <BarLoader color="#2563eb" width={180} />
           </div>
         </div>
       </div>

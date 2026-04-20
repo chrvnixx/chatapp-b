@@ -19,7 +19,7 @@ export default function HomePage() {
   const [activeFilter, setActiveFilter] = useState("all");
   const deferredSearch = useDeferredValue(search);
   const resetConversation = useConversation((state) => state.resetConversation);
-  const { onlineUsers, isSocketConnected } = useSocket();
+  const { onlineUsers } = useSocket();
 
   useEffect(() => {
     getConversations().catch(() => null);
@@ -60,107 +60,121 @@ export default function HomePage() {
   }
 
   return (
-    <div className="page-shell">
+    <div className="chat-page-shell">
       <div className="chat-shell">
-        <aside className="sidebar-panel glass-card flex flex-col gap-6 p-4 md:p-6">
-          <div className="flex items-start justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <div className="h-16 w-16 overflow-hidden rounded-[24px] border border-[rgba(19,34,56,0.08)] bg-white/80 p-1 shadow-[0_14px_28px_rgba(19,34,56,0.08)]">
+        <aside className="sidebar-panel glass-card flex flex-col gap-4 p-4 md:p-5">
+          <div className="sidebar-top">
+            <div className="sidebar-brand">
+              <span className="brand-badge">
+                <FiWifi size={14} />
+                LockIn Chat
+              </span>
+              <button
+                type="button"
+                className="icon-button"
+                onClick={handleLogout}
+                aria-label="Log out"
+              >
+                <FiLogOut size={18} />
+              </button>
+            </div>
+
+            <section className="user-card user-card--compact">
+              <div className="user-card__avatar">
                 <img
                   src={user?.profilePic}
                   alt={`${user?.fullName} avatar`}
-                  className="h-full w-full rounded-[20px] object-cover"
+                  className="h-full w-full rounded-[16px] object-cover"
                 />
               </div>
-              <div>
-                <span className="section-chip">Your desk</span>
-                <h1 className="panel-title mt-3 text-2xl">{user?.fullName}</h1>
-                <p className="panel-subtitle">@{user?.username}</p>
+
+              <div className="user-card__meta min-w-0 flex-1">
+                <div className="user-card__heading">
+                  <div className="min-w-0">
+                    <p className="user-card__eyebrow">Workspace profile</p>
+                    <h1 className="truncate">{user?.fullName}</h1>
+                  </div>
+                  <span className="status-pill status-pill--online">
+                    Signed in
+                  </span>
+                </div>
+
+                <div className="user-card__footer">
+                  <span className="user-card__handle truncate">
+                    @{user?.username}
+                  </span>
+                  <div className="user-card__stats">
+                    <span className="mini-stat-pill">
+                      <strong>{conversations.length}</strong>
+                      contacts
+                    </span>
+                    <span className="mini-stat-pill mini-stat-pill--online">
+                      <strong>{onlineCount}</strong>
+                      online
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <div className="sidebar-toolbar">
+              <label className="field-shell field-shell--inline">
+                <FiSearch className="sidebar-search-icon" size={18} />
+                <input
+                  type="text"
+                  className="field-input"
+                  placeholder="Search by name or username"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  aria-label="Search people"
+                />
+              </label>
+
+              <div className="sidebar-filters">
+                <button
+                  type="button"
+                  className={`filter-pill ${activeFilter === "all" ? "filter-pill--active" : ""}`}
+                  onClick={() => setActiveFilter("all")}
+                >
+                  <FiUsers size={14} />
+                  All contacts
+                </button>
+                <button
+                  type="button"
+                  className={`filter-pill ${activeFilter === "online" ? "filter-pill--active" : ""}`}
+                  onClick={() => setActiveFilter("online")}
+                >
+                  <FiWifi size={14} />
+                  Online only
+                </button>
               </div>
             </div>
 
-            <button
-              type="button"
-              className="icon-button"
-              onClick={handleLogout}
-              aria-label="Log out"
-            >
-              <FiLogOut size={18} />
-            </button>
+            {error ? (
+              <div className="status-banner status-banner--error">{error}</div>
+            ) : null}
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3">
-            <article className="mini-stat">
-              <span>Contacts</span>
-              <strong>{conversations.length}</strong>
-            </article>
-            <article className="mini-stat">
-              <span>Online</span>
-              <strong>{onlineCount}</strong>
-            </article>
-            <article className="mini-stat">
-              <span>Socket</span>
-              <strong>{isSocketConnected ? "Live" : "Sync"}</strong>
-            </article>
-          </div>
-
-          <label className="field-shell">
-            <span className="field-label">Search people</span>
-            <div className="flex items-center gap-3">
-              <FiSearch className="text-[var(--muted)]" size={18} />
-              <input
-                type="text"
-                className="field-input"
-                placeholder="Search by name or username"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-              />
-            </div>
-          </label>
-
-          <div className="flex flex-wrap gap-2">
-            <button
-              type="button"
-              className={`filter-pill ${activeFilter === "all" ? "filter-pill--active" : ""}`}
-              onClick={() => setActiveFilter("all")}
-            >
-              <FiUsers size={14} />
-              All contacts
-            </button>
-            <button
-              type="button"
-              className={`filter-pill ${activeFilter === "online" ? "filter-pill--active" : ""}`}
-              onClick={() => setActiveFilter("online")}
-            >
-              <FiWifi size={14} />
-              Online only
-            </button>
-          </div>
-
-          {error ? (
-            <div className="status-banner status-banner--error">{error}</div>
-          ) : null}
-
-          <div className="min-h-0 flex-1">
-            <div className="mb-3 flex items-center justify-between">
-              <span className="section-chip">Conversations</span>
-              <span className="text-sm text-[var(--muted)]">
-                {filteredConversations.length} visible
-              </span>
+          <section className="sidebar-list-panel min-h-0 flex-1">
+            <div className="conversation-list-header">
+              <div>
+                <span className="section-chip">Inbox</span>
+                <h2 className="mt-2 text-lg font-semibold text-white">
+                  Contacts
+                </h2>
+              </div>
+              <span className="count-badge">{filteredConversations.length}</span>
             </div>
 
-            <div className="message-scroll flex h-full flex-col gap-3 pr-1">
+            <div className="message-scroll conversation-list flex h-full flex-col gap-2 pr-1">
               {isFetchingConversations
                 ? Array.from({ length: 5 }).map((_, index) => (
-                    <div
-                      key={index}
-                      className="rounded-[24px] border border-[rgba(19,34,56,0.08)] bg-white/72 p-4"
-                    >
+                    <div key={index} className="conversation-skeleton">
                       <div className="flex animate-pulse items-center gap-3">
-                        <div className="h-14 w-14 rounded-[20px] bg-[rgba(19,34,56,0.08)]" />
+                        <div className="h-14 w-14 rounded-[18px] bg-white/10" />
                         <div className="flex-1 space-y-2">
-                          <div className="h-4 w-32 rounded-full bg-[rgba(19,34,56,0.08)]" />
-                          <div className="h-3 w-24 rounded-full bg-[rgba(19,34,56,0.06)]" />
+                          <div className="h-4 w-32 rounded-full bg-white/14" />
+                          <div className="h-3 w-24 rounded-full bg-white/10" />
                         </div>
                       </div>
                     </div>
@@ -175,28 +189,18 @@ export default function HomePage() {
                 : null}
 
               {!isFetchingConversations && filteredConversations.length === 0 ? (
-                <div className="rounded-[28px] border border-dashed border-[rgba(19,34,56,0.12)] bg-white/55 p-6 text-center">
-                  <p className="font-semibold text-[var(--ink)]">
-                    No matches right now
-                  </p>
+                <div className="conversation-empty text-center">
+                  <p className="font-semibold text-white">No matches found</p>
                   <p className="panel-subtitle mt-2 text-sm">
-                    Try a different search or switch back to all contacts.
+                    Try another search or switch back to all contacts.
                   </p>
                 </div>
               ) : null}
             </div>
-          </div>
-
-          <div className="insight-card">
-            <span className="section-chip">Tip</span>
-            <p className="panel-subtitle mt-3 text-sm">
-              Search updates live, and online-only mode helps you focus on
-              people who can reply immediately.
-            </p>
-          </div>
+          </section>
         </aside>
 
-        <div className="min-h-0">
+        <div className="h-full min-h-0">
           <MessageContainer />
         </div>
       </div>

@@ -116,7 +116,7 @@ export default function Login() {
                 Pick up the conversation right where you left it.
               </p>
             </div>
-            <div className="hidden h-14 w-14 items-center justify-center rounded-[20px] bg-[rgba(255,122,89,0.12)] text-[var(--primary-deep)] sm:flex">
+            <div className="hidden h-14 w-14 items-center justify-center rounded-[20px] bg-[rgba(37,99,235,0.12)] text-[var(--primary-deep)] sm:flex">
               <RiChatSmile3Line size={24} />
             </div>
           </div>
