@@ -39,17 +39,13 @@ export async function getMessage(req, res) {
   try {
     const conversation = await Conversation.findOne({
       participants: { $all: [userToChatId, senderId] },
-    });
+    }).populate("messages");
 
     if (!conversation) {
-      return res.status(200).json({ message: "No messages found" });
+      return res.status(200).json([]);
     }
 
-    const messages = await Message.find({
-      _id: { $in: conversation.messages },
-    });
-    console.log(messages);
-    res.status(200).json(messages);
+    res.status(200).json(conversation.messages);
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
     console.log("Error in sendMessage Controller", error);

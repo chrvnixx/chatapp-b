@@ -29,7 +29,7 @@ export default function useMessageStore() {
         setIsLoading(true);
         const res = await axios.get(`${api_url}/${selectedConvo?._id}`);
 
-        setMessages([res.data]);
+        setMessages(res.data);
       } catch (error) {
         console.log(error);
       } finally {
@@ -40,5 +40,5 @@ export default function useMessageStore() {
       getMessages();
     }
   }, [selectedConvo?._id, setMessages]);
-  return { sendMessage, isLoading, };
+  return { sendMessage, isLoading };
 }
