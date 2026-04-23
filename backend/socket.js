@@ -1,14 +1,28 @@
 import { Server } from "socket.io";
 import http from "http";
 import express from "express";
+import dotenv from "dotenv";
+
+dotenv.config();
+
+const clientOrigins = [
+  process.env.CLIENT_URL,
+  process.env.RENDER_EXTERNAL_URL,
+  "http://localhost:5173",
+]
+  .filter(Boolean)
+  .flatMap((origin) => origin.split(","))
+  .map((origin) => origin.trim())
+  .filter(Boolean);
 
 const app = express();
 
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: ["http://localhost:5173"],
+    origin: clientOrigins,
     methods: ["GET", "POST"],
+    credentials: true,
   },
 });
 
