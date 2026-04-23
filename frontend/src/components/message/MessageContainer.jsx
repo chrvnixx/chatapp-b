@@ -30,6 +30,12 @@ export default function MessageContainer({
   const isSelectedUserOnline = selectedConvo
     ? onlineUsers.includes(selectedConvo._id)
     : false;
+  const compactBarTitle = selectedConvo ? selectedConvo.fullName : "Inbox";
+  const compactBarSubtitle = selectedConvo
+    ? isSelectedUserOnline
+      ? "Online now"
+      : "Currently offline"
+    : "Open your contacts";
 
   useEffect(() => {
     lastMessageRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -78,30 +84,40 @@ export default function MessageContainer({
 
   if (!selectedConvo) {
     return (
-      <section className="message-panel glass-card empty-panel p-6 md:p-8">
-        <div className="max-w-xl text-center">
-          <div className="mt-6">
-            <span className="section-chip">
-              <CiChat1 size={50} />
-            </span>
-          </div>
-          <h2 className="panel-title mt-6 text-4xl">
-            Choose a conversation to start chatting
-          </h2>
-          <p className="panel-subtitle mt-4 text-base">
-            Pick a contact from the sidebar and keep the conversation moving.
-          </p>
-          {showSidebarToggle ? (
+      <section className="message-panel glass-card empty-panel flex h-full flex-col overflow-hidden">
+        {showSidebarToggle ? (
+          <div className="compact-chat-topbar">
             <button
               type="button"
-              className="icon-button mt-8"
+              className="icon-button"
               onClick={onOpenSidebar}
               aria-label="Open contacts"
             >
               <FiMenu size={18} />
             </button>
-          ) : null}
-          {/* <div className="mt-8 grid gap-3 text-left sm:grid-cols-2">
+            <div className="min-w-0">
+              <p className="compact-chat-topbar__eyebrow">{compactBarSubtitle}</p>
+              <h2 className="compact-chat-topbar__title truncate">
+                {compactBarTitle}
+              </h2>
+            </div>
+          </div>
+        ) : null}
+
+        <div className="flex flex-1 items-center justify-center p-6 md:p-8">
+          <div className="max-w-xl text-center">
+            <div className="mt-6">
+              <span className="section-chip">
+                <CiChat1 size={50} />
+              </span>
+            </div>
+            <h2 className="panel-title mt-6 text-4xl">
+              Choose a conversation to start chatting
+            </h2>
+            <p className="panel-subtitle mt-4 text-base">
+              Pick a contact from the sidebar and keep the conversation moving.
+            </p>
+            {/* <div className="mt-8 grid gap-3 text-left sm:grid-cols-2">
             <article className="info-tile">
               <h3>Presence-aware inbox</h3>
               <p>See who is available before you open a thread.</p>
@@ -113,6 +129,7 @@ export default function MessageContainer({
               </p>
             </article>
           </div> */}
+          </div>
         </div>
       </section>
     );
@@ -120,18 +137,27 @@ export default function MessageContainer({
 
   return (
     <section className="message-panel glass-card flex h-full flex-col overflow-hidden">
+      {showSidebarToggle ? (
+        <div className="compact-chat-topbar">
+          <button
+            type="button"
+            className="icon-button"
+            onClick={onOpenSidebar}
+            aria-label="Open contacts"
+          >
+            <FiMenu size={18} />
+          </button>
+          <div className="min-w-0">
+            <p className="compact-chat-topbar__eyebrow">{compactBarSubtitle}</p>
+            <h2 className="compact-chat-topbar__title truncate">
+              {compactBarTitle}
+            </h2>
+          </div>
+        </div>
+      ) : null}
+
       <header className="flex flex-wrap items-center justify-between gap-4 px-5 py-5 md:px-6">
         <div className="flex items-center gap-4">
-          {showSidebarToggle ? (
-            <button
-              type="button"
-              className="icon-button"
-              onClick={onOpenSidebar}
-              aria-label="Open contacts"
-            >
-              <FiMenu size={18} />
-            </button>
-          ) : null}
           <div className="relative">
             <div className="message-header-avatar">
               <img

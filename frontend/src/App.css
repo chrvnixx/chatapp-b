@@ -116,6 +116,32 @@
   background: rgba(15, 23, 42, 0.18);
 }
 
+.compact-chat-topbar {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.9rem 1rem;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.95)),
+    var(--surface-strong);
+}
+
+.compact-chat-topbar__eyebrow {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.compact-chat-topbar__title {
+  margin-top: 0.18rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+
 .auth-showcase,
 .auth-panel,
 .sidebar-panel,
@@ -970,6 +996,12 @@
     min-height: 42rem;
   }
 
+  .compact-chat-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 12;
+  }
+
   .conversation-list {
     max-height: 28rem;
   }
@@ -1032,6 +1064,10 @@
   .sidebar-panel--compact {
     width: calc(100% - 0.5rem);
     max-width: none;
+  }
+
+  .compact-chat-topbar {
+    padding: 0.85rem 0.85rem 0.8rem;
   }
 
   .auth-showcase,
