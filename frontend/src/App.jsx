@@ -19,15 +19,7 @@ function App() {
   if (isCheckingAuth) {
     return (
       <div className="loading-screen">
-        <div className="loading-card glass-card">
-          <span className="section-chip">LockIn</span>
-          <h1 className="mt-4 text-3xl font-semibold">
-            Bringing your workspace online
-          </h1>
-          <p className="mt-3 max-w-md text-sm text-[var(--muted)]">
-            We&apos;re checking your session, syncing presence, and preparing
-            the chat view.
-          </p>
+        <div className="loading-card flex justify-center glass-card">
           <div className="mt-6">
             <BarLoader color="#2563eb" width={180} />
           </div>

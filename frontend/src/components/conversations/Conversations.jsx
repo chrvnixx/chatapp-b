@@ -1,7 +1,7 @@
 import { useSocket } from "../../context/useSocket";
 import { useConversation } from "../../store/conversation";
 
-export default function Conversations({ item }) {
+export default function Conversations({ item, onSelect }) {
   const selectedConvo = useConversation((state) => state.selectedConvo);
   const setSelectedConvo = useConversation((state) => state.setSelectedConvo);
   const { onlineUsers } = useSocket();
@@ -12,6 +12,7 @@ export default function Conversations({ item }) {
 
   function handleClick() {
     setSelectedConvo(item);
+    onSelect?.();
   }
 
   return (

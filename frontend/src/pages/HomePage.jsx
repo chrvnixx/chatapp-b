@@ -1,10 +1,11 @@
 import { useDeferredValue, useEffect, useMemo, useState } from "react";
-import { FiLogOut, FiSearch, FiUsers, FiWifi } from "react-icons/fi";
+import { FiLogOut, FiSearch, FiUsers, FiWifi, FiX } from "react-icons/fi";
 import Conversations from "../components/conversations/Conversations";
 import MessageContainer from "../components/message/MessageContainer";
 import { useSocket } from "../context/useSocket";
 import { useAuthStore } from "../store/authStore";
 import { useConversation } from "../store/conversation";
+import { TbLockCheck } from "react-icons/tb";
 
 export default function HomePage() {
   const user = useAuthStore((state) => state.user);
@@ -17,6 +18,8 @@ export default function HomePage() {
   const error = useAuthStore((state) => state.error);
   const [search, setSearch] = useState("");
   const [activeFilter, setActiveFilter] = useState("all");
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isCompactScreen, setIsCompactScreen] = useState(false);
   const deferredSearch = useDeferredValue(search);
   const resetConversation = useConversation((state) => state.resetConversation);
   const { onlineUsers } = useSocket();
@@ -25,10 +28,26 @@ export default function HomePage() {
     getConversations().catch(() => null);
   }, [getConversations]);
 
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(max-width: 1024px)");
+    const syncBreakpoint = (event) => {
+      setIsCompactScreen(event.matches);
+      if (!event.matches) {
+        setIsSidebarOpen(false);
+      }
+    };
+
+    syncBreakpoint(mediaQuery);
+    mediaQuery.addEventListener("change", syncBreakpoint);
+
+    return () => mediaQuery.removeEventListener("change", syncBreakpoint);
+  }, []);
+
   const onlineCount = useMemo(
     () =>
-      conversations.filter((conversation) => onlineUsers.includes(conversation._id))
-        .length,
+      conversations.filter((conversation) =>
+        onlineUsers.includes(conversation._id),
+      ).length,
     [conversations, onlineUsers],
   );
 
@@ -62,21 +81,35 @@ export default function HomePage() {
   return (
     <div className="chat-page-shell">
       <div className="chat-shell">
-        <aside className="sidebar-panel glass-card flex flex-col gap-4 p-4 md:p-5">
+        <aside
+          className={`sidebar-panel ${isCompactScreen ? "sidebar-panel--compact" : ""} ${isSidebarOpen ? "sidebar-panel--open" : ""} glass-card flex flex-col gap-4 p-4 md:p-5`}
+        >
           <div className="sidebar-top">
             <div className="sidebar-brand">
               <span className="brand-badge">
-                <FiWifi size={14} />
+                <TbLockCheck size={16} />
                 LockIn Chat
               </span>
-              <button
-                type="button"
-                className="icon-button"
-                onClick={handleLogout}
-                aria-label="Log out"
-              >
-                <FiLogOut size={18} />
-              </button>
+              <div className="flex items-center gap-2">
+                {isCompactScreen ? (
+                  <button
+                    type="button"
+                    className="icon-button"
+                    onClick={() => setIsSidebarOpen(false)}
+                    aria-label="Hide sidebar"
+                  >
+                    <FiX size={18} />
+                  </button>
+                ) : null}
+                <button
+                  type="button"
+                  className="icon-button"
+                  onClick={handleLogout}
+                  aria-label="Log out"
+                >
+                  <FiLogOut size={18} />
+                </button>
+              </div>
             </div>
 
             <section className="user-card user-card--compact">
@@ -91,7 +124,7 @@ export default function HomePage() {
               <div className="user-card__meta min-w-0 flex-1">
                 <div className="user-card__heading">
                   <div className="min-w-0">
-                    <p className="user-card__eyebrow">Workspace profile</p>
+                    <p className="user-card__eyebrow">Chatspace profile</p>
                     <h1 className="truncate">{user?.fullName}</h1>
                   </div>
                   <span className="status-pill status-pill--online">
@@ -100,7 +133,7 @@ export default function HomePage() {
                 </div>
 
                 <div className="user-card__footer">
-                  <span className="user-card__handle truncate">
+                  <span className="user-card__handle truncate  w-50">
                     @{user?.username}
                   </span>
                   <div className="user-card__stats">
@@ -108,7 +141,7 @@ export default function HomePage() {
                       <strong>{conversations.length}</strong>
                       contacts
                     </span>
-                    <span className="mini-stat-pill mini-stat-pill--online">
+                    <span className="mini-stat-pill mini-stat-pill--online ">
                       <strong>{onlineCount}</strong>
                       online
                     </span>
@@ -163,7 +196,9 @@ export default function HomePage() {
                   Contacts
                 </h2>
               </div>
-              <span className="count-badge">{filteredConversations.length}</span>
+              <span className="count-badge">
+                {filteredConversations.length}
+              </span>
             </div>
 
             <div className="message-scroll conversation-list flex h-full flex-col gap-2 pr-1">
@@ -181,14 +216,18 @@ export default function HomePage() {
                   ))
                 : null}
 
-              {!isFetchingConversations &&
-              filteredConversations.length > 0
+              {!isFetchingConversations && filteredConversations.length > 0
                 ? filteredConversations.map((item) => (
-                    <Conversations key={item._id} item={item} />
+                    <Conversations
+                      key={item._id}
+                      item={item}
+                      onSelect={() => setIsSidebarOpen(false)}
+                    />
                   ))
                 : null}
 
-              {!isFetchingConversations && filteredConversations.length === 0 ? (
+              {!isFetchingConversations &&
+              filteredConversations.length === 0 ? (
                 <div className="conversation-empty text-center">
                   <p className="font-semibold text-white">No matches found</p>
                   <p className="panel-subtitle mt-2 text-sm">
@@ -200,8 +239,20 @@ export default function HomePage() {
           </section>
         </aside>
 
-        <div className="h-full min-h-0">
-          <MessageContainer />
+        {isCompactScreen && isSidebarOpen ? (
+          <button
+            type="button"
+            className="sidebar-backdrop"
+            aria-label="Close sidebar"
+            onClick={() => setIsSidebarOpen(false)}
+          />
+        ) : null}
+
+        <div className="chat-main h-full min-h-0">
+          <MessageContainer
+            showSidebarToggle={isCompactScreen}
+            onOpenSidebar={() => setIsSidebarOpen(true)}
+          />
         </div>
       </div>
     </div>

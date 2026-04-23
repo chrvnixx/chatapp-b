@@ -2,8 +2,14 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { BarLoader } from "react-spinners";
 import toast from "react-hot-toast";
-import { FiArrowRight, FiEye, FiEyeOff, FiShield, FiUsers } from "react-icons/fi";
-import { HiOutlineSparkles } from "react-icons/hi2";
+import {
+  FiArrowRight,
+  FiEye,
+  FiEyeOff,
+  FiShield,
+  FiUsers,
+} from "react-icons/fi";
+import { TbLockCheck } from "react-icons/tb";
 import { RiChatSmile3Line } from "react-icons/ri";
 import { useAuthStore } from "../store/authStore";
 import { useConversation } from "../store/conversation";
@@ -37,7 +43,9 @@ export default function Login() {
       toast.success("Welcome back.");
       navigate("/");
     } catch (loginError) {
-      toast.error(loginError.response?.data?.message ?? "Couldn't sign you in.");
+      toast.error(
+        loginError.response?.data?.message ?? "Couldn't sign you in.",
+      );
     }
   }
 
@@ -47,14 +55,14 @@ export default function Login() {
         <section className="auth-showcase glass-card flex flex-col justify-between gap-8">
           <div>
             <span className="brand-badge">
-              <HiOutlineSparkles size={14} />
+              <TbLockCheck size={14} />
               LockIn Chat
             </span>
             <h1 className="mt-6 text-4xl font-semibold leading-tight md:text-5xl">
               A calmer chat space built for quick focus and warm conversations.
             </h1>
             <p className="panel-subtitle mt-4 max-w-xl text-base">
-              Sign in to your workspace, keep an eye on who&apos;s online, and
+              Sign in to your chatspace, keep an eye on who&apos;s online, and
               move through your conversations without noise.
             </p>
           </div>
@@ -66,7 +74,7 @@ export default function Login() {
                 Presence
               </span>
               <p className="mt-4 text-sm leading-7 text-[var(--muted)]">
-                See which teammates are active before you open the thread.
+                See which contacts are active before you open the chat.
               </p>
             </article>
             <article className="feature-card">
@@ -75,36 +83,11 @@ export default function Login() {
                 Session Safety
               </span>
               <p className="mt-4 text-sm leading-7 text-[var(--muted)]">
-                Cookie-based auth keeps sign-in quiet and consistent.
+                Cookie-based auth keeps sign-in safe and consistent.
               </p>
             </article>
           </div>
 
-          <div className="insight-card">
-            <p className="text-sm font-semibold text-[var(--ink)]">
-              Today&apos;s flow
-            </p>
-            <div className="mt-4 grid gap-3 sm:grid-cols-3">
-              <div>
-                <p className="text-2xl font-semibold">01</p>
-                <p className="mt-2 text-sm text-[var(--muted)]">
-                  Sign in and sync your session.
-                </p>
-              </div>
-              <div>
-                <p className="text-2xl font-semibold">02</p>
-                <p className="mt-2 text-sm text-[var(--muted)]">
-                  Filter the sidebar and spot active contacts.
-                </p>
-              </div>
-              <div>
-                <p className="text-2xl font-semibold">03</p>
-                <p className="mt-2 text-sm text-[var(--muted)]">
-                  Jump into a polished chat workspace.
-                </p>
-              </div>
-            </div>
-          </div>
         </section>
 
         <section className="auth-panel glass-card">
@@ -172,7 +155,7 @@ export default function Login() {
                 <BarLoader color="#ffffff" width={72} />
               ) : (
                 <>
-                  Enter workspace
+                  Enter chatspace
                   <FiArrowRight size={18} />
                 </>
               )}

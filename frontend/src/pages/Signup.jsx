@@ -50,7 +50,7 @@ export default function Signup() {
     try {
       await signup(fullName.trim(), username.trim(), password, gender);
       toast.success("Your account is ready.");
-      navigate("/");
+      navigate("/login");
     } catch (signupError) {
       toast.error(
         signupError.response?.data?.message ?? "Couldn't create account.",
@@ -65,7 +65,7 @@ export default function Signup() {
           <div>
             <span className="brand-badge">
               <HiOutlineSparkles size={14} />
-              Fresh workspace
+              LockIn Chat
             </span>
             <h1 className="mt-6 text-4xl font-semibold leading-tight md:text-5xl">
               Set up a chat experience that feels sharp, modern, and easy to
@@ -91,7 +91,7 @@ export default function Signup() {
             <article className="feature-card">
               <span className="section-chip">
                 <FiUsers size={14} />
-                Team-ready
+                Contact-ready
               </span>
               <p className="mt-4 text-sm leading-7 text-[var(--muted)]">
                 Searchable contact lists and live presence make the next step
@@ -100,8 +100,8 @@ export default function Signup() {
             </article>
           </div>
 
-          <div className="insight-card">
-            <p className="text-sm font-semibold text-[var(--ink)]">
+          <div className="insight-card -mt-10">
+            <p className="text-sm font-semibold text-white text-[var(--ink)]">
               What you get immediately
             </p>
             <div className="mt-4 space-y-3">
@@ -120,7 +120,7 @@ export default function Signup() {
               <div className="flex items-start gap-3">
                 <FiCheckCircle className="mt-1 text-[var(--teal)]" size={18} />
                 <p className="text-sm leading-7 text-[var(--muted)]">
-                  Cleaner forms with inline validation and clearer next steps.
+                  Safe and Secure so you never have to worry about security.
                 </p>
               </div>
             </div>
@@ -132,7 +132,7 @@ export default function Signup() {
             <span className="section-chip">Create your account</span>
             <h2 className="mt-4 text-3xl font-semibold">Join LockIn Chat</h2>
             <p className="panel-subtitle mt-3">
-              A quick setup and you&apos;re ready to start messaging.
+              A quick setup and you&apos;re ready to start chatting.
             </p>
           </div>
 
@@ -204,9 +204,7 @@ export default function Signup() {
                 <button
                   type="button"
                   className="text-sm font-semibold text-[var(--primary-deep)]"
-                  onClick={() =>
-                    setShowConfirmPassword((current) => !current)
-                  }
+                  onClick={() => setShowConfirmPassword((current) => !current)}
                 >
                   {showConfirmPassword ? (
                     <FiEyeOff size={18} />

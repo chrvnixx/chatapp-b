@@ -1,13 +1,22 @@
 import { useEffect, useRef, useState } from "react";
-import { FiClock, FiMessageSquare, FiSend, FiWifi } from "react-icons/fi";
-import { HiOutlineSparkles } from "react-icons/hi2";
+import {
+  FiClock,
+  FiMenu,
+  FiMessageSquare,
+  FiSend,
+  FiWifi,
+} from "react-icons/fi";
 import { useSocket } from "../../context/useSocket";
 import { useConversation } from "../../store/conversation";
 import MessageSkeleton from "../MessageSkeleton";
 import useMessageStore from "../../store/useMessageStore";
 import Messages from "./Messages";
+import { CiChat1 } from "react-icons/ci";
 
-export default function MessageContainer() {
+export default function MessageContainer({
+  onOpenSidebar,
+  showSidebarToggle = false,
+}) {
   const selectedConvo = useConversation((state) => state.selectedConvo);
   const messages = useConversation((state) => state.messages);
   const [draftMessages, setDraftMessages] = useState({});
@@ -71,32 +80,39 @@ export default function MessageContainer() {
     return (
       <section className="message-panel glass-card empty-panel p-6 md:p-8">
         <div className="max-w-xl text-center">
-          <div className="empty-panel__icon mx-auto">
-            <HiOutlineSparkles size={18} />
-          </div>
           <div className="mt-6">
             <span className="section-chip">
-              <HiOutlineSparkles size={14} />
-              Inbox ready
+              <CiChat1 size={50} />
             </span>
           </div>
           <h2 className="panel-title mt-6 text-4xl">
-            Choose a conversation to start messaging
+            Choose a conversation to start chatting
           </h2>
           <p className="panel-subtitle mt-4 text-base">
-            Pick a contact from the sidebar to review presence, open the thread,
-            and keep the conversation moving.
+            Pick a contact from the sidebar and keep the conversation moving.
           </p>
-          <div className="mt-8 grid gap-3 text-left sm:grid-cols-2">
+          {showSidebarToggle ? (
+            <button
+              type="button"
+              className="icon-button mt-8"
+              onClick={onOpenSidebar}
+              aria-label="Open contacts"
+            >
+              <FiMenu size={18} />
+            </button>
+          ) : null}
+          {/* <div className="mt-8 grid gap-3 text-left sm:grid-cols-2">
             <article className="info-tile">
               <h3>Presence-aware inbox</h3>
               <p>See who is available before you open a thread.</p>
             </article>
             <article className="info-tile">
               <h3>Fast composer</h3>
-              <p>Use Enter to send, or Shift + Enter when you need a new line.</p>
+              <p>
+                Use Enter to send, or Shift + Enter when you need a new line.
+              </p>
             </article>
-          </div>
+          </div> */}
         </div>
       </section>
     );
@@ -106,6 +122,16 @@ export default function MessageContainer() {
     <section className="message-panel glass-card flex h-full flex-col overflow-hidden">
       <header className="flex flex-wrap items-center justify-between gap-4 px-5 py-5 md:px-6">
         <div className="flex items-center gap-4">
+          {showSidebarToggle ? (
+            <button
+              type="button"
+              className="icon-button"
+              onClick={onOpenSidebar}
+              aria-label="Open contacts"
+            >
+              <FiMenu size={18} />
+            </button>
+          ) : null}
           <div className="relative">
             <div className="message-header-avatar">
               <img
@@ -164,7 +190,7 @@ export default function MessageContainer() {
               </div>
               <span className="section-chip mt-6">No messages yet</span>
               <h3 className="mt-5 text-2xl font-semibold text-[var(--ink)]">
-                Start the thread
+                Start a conversation
               </h3>
               <p className="panel-subtitle mt-3 max-w-md text-sm">
                 Send a first message to {selectedConvo.fullName} and the full
